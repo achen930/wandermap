@@ -18,7 +18,9 @@ const fakeLocations: Location[] = [
 ];
 
 export const locationsRoute = new Hono()
-	.get("/", (c) => {
+	.get("/", async (c) => {
+		// await new Promise((r) => setTimeout(r, 2000));
+		c.status(200);
 		return c.json({ locations: fakeLocations });
 	})
 	.post("/", zValidator("json", createPostSchema), async (c) => {
@@ -29,9 +31,9 @@ export const locationsRoute = new Hono()
 		return c.json(newLocation);
 	})
 	.get("/total-locations", async (c) => {
-		await new Promise((r) => setTimeout(r, 2000));
+		// await new Promise((r) => setTimeout(r, 2000));
 		const total = fakeLocations.length;
-		console.log(total);
+		c.status(200);
 		return c.json({ total });
 	})
 	.get("/:id{[0-9]+}", (c) => {
@@ -40,6 +42,7 @@ export const locationsRoute = new Hono()
 		if (!location) {
 			return c.notFound();
 		}
+		c.status(200);
 		return c.json({ location });
 	})
 	.delete("/:id{[0-9]+}", (c) => {
@@ -49,6 +52,9 @@ export const locationsRoute = new Hono()
 			return c.notFound();
 		}
 		const deletedLocation = fakeLocations.splice(index, 1)[0];
+		// set status for deleting and don't show deleted item
+		// c.status(204);
+		// return c.body(null)
 		return c.json({
 			message: "Location deleted",
 			location: deletedLocation,

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { createFileRoute } from "@tanstack/react-router";
 import {
 	Card,
 	CardContent,
@@ -6,9 +6,12 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
-import "./App.css";
-import { api } from "./lib/api";
+import { api } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
+
+export const Route = createFileRoute("/")({
+	component: Index,
+});
 
 async function getTotalLocations() {
 	const res = await api.locations["total-locations"].$get();
@@ -19,7 +22,7 @@ async function getTotalLocations() {
 	return data;
 }
 
-function App() {
+function Index() {
 	const { isPending, error, data } = useQuery({
 		queryKey: ["get-total-locations"],
 		queryFn: getTotalLocations,
@@ -39,5 +42,3 @@ function App() {
 		</>
 	);
 }
-
-export default App;
