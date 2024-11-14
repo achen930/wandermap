@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
 	Card,
 	CardContent,
@@ -7,23 +7,35 @@ import {
 	CardTitle,
 } from "@/components/ui/card";
 import "./App.css";
+import { api } from "./lib/api";
+import { useQuery } from "@tanstack/react-query";
+
+async function getTotalLocations() {
+	const res = await api.locations["total-locations"].$get();
+	if (!res.ok) {
+		throw new Error("server error");
+	}
+	const data = await res.json();
+	return data;
+}
 
 function App() {
-	const [totalDestinations, setTotalDestinations] = useState(0);
+	const { isPending, error, data } = useQuery({
+		queryKey: ["get-total-locations"],
+		queryFn: getTotalLocations,
+	});
+
+	if (error) return "An error has occurred: " + error.message;
 
 	return (
 		<>
-			<div className="bg-background">
-				<h1 className="text-3xl font-bold underline">Hello world!</h1>
-				<Card className="w-[350px]">
-					<CardHeader>
-						<CardTitle>Create project</CardTitle>
-						<CardDescription>
-							Deploy your new project in one-click.
-						</CardDescription>
-					</CardHeader>
-				</Card>
-			</div>
+			<Card className="w-[350px]">
+				<CardHeader>
+					<CardTitle>Total Locations</CardTitle>
+					<CardDescription>The total locations you've been to</CardDescription>
+					<CardContent>{isPending ? "..." : data.total}</CardContent>
+				</CardHeader>
+			</Card>
 		</>
 	);
 }

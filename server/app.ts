@@ -1,17 +1,16 @@
 import { Hono } from "hono";
 import { logger } from "hono/logger";
-import { destinationsRoute } from "./routes/destinations";
+import { serveStatic } from "hono/bun";
+import { locationsRoute } from "./routes/locations";
 
 const app = new Hono();
 
 app.use("*", logger());
 
-app.get("/", (c) => c.text("hello"));
+const apiRoutes = app.basePath("/api").route("/locations", locationsRoute);
 
-app.get("/test", (c) => {
-	return c.json({ message: "test" });
-});
-
-app.route("/api/destinations", destinationsRoute);
+app.use("*", serveStatic({ root: "./frontend/dist" }));
+app.get("*", serveStatic({ path: "./frontend/dist/index.html" }));
 
 export default app;
+export type ApiRoutes = typeof apiRoutes;
