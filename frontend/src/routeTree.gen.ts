@@ -11,24 +11,14 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
-import { Route as LocationsImport } from './routes/locations'
-import { Route as AddLocationImport } from './routes/add-location'
 import { Route as AboutImport } from './routes/about'
-import { Route as IndexImport } from './routes/index'
+import { Route as AuthenticatedImport } from './routes/_authenticated'
+import { Route as AuthenticatedIndexImport } from './routes/_authenticated/index'
+import { Route as AuthenticatedProfileImport } from './routes/_authenticated/profile'
+import { Route as AuthenticatedLocationsImport } from './routes/_authenticated/locations'
+import { Route as AuthenticatedAddLocationImport } from './routes/_authenticated/add-location'
 
 // Create/Update Routes
-
-const LocationsRoute = LocationsImport.update({
-  id: '/locations',
-  path: '/locations',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const AddLocationRoute = AddLocationImport.update({
-  id: '/add-location',
-  path: '/add-location',
-  getParentRoute: () => rootRoute,
-} as any)
 
 const AboutRoute = AboutImport.update({
   id: '/about',
@@ -36,21 +26,44 @@ const AboutRoute = AboutImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const IndexRoute = IndexImport.update({
+const AuthenticatedRoute = AuthenticatedImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const AuthenticatedIndexRoute = AuthenticatedIndexImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+
+const AuthenticatedProfileRoute = AuthenticatedProfileImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+
+const AuthenticatedLocationsRoute = AuthenticatedLocationsImport.update({
+  id: '/locations',
+  path: '/locations',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+
+const AuthenticatedAddLocationRoute = AuthenticatedAddLocationImport.update({
+  id: '/add-location',
+  path: '/add-location',
+  getParentRoute: () => AuthenticatedRoute,
 } as any)
 
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexImport
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof AuthenticatedImport
       parentRoute: typeof rootRoute
     }
     '/about': {
@@ -60,68 +73,108 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutImport
       parentRoute: typeof rootRoute
     }
-    '/add-location': {
-      id: '/add-location'
+    '/_authenticated/add-location': {
+      id: '/_authenticated/add-location'
       path: '/add-location'
       fullPath: '/add-location'
-      preLoaderRoute: typeof AddLocationImport
-      parentRoute: typeof rootRoute
+      preLoaderRoute: typeof AuthenticatedAddLocationImport
+      parentRoute: typeof AuthenticatedImport
     }
-    '/locations': {
-      id: '/locations'
+    '/_authenticated/locations': {
+      id: '/_authenticated/locations'
       path: '/locations'
       fullPath: '/locations'
-      preLoaderRoute: typeof LocationsImport
-      parentRoute: typeof rootRoute
+      preLoaderRoute: typeof AuthenticatedLocationsImport
+      parentRoute: typeof AuthenticatedImport
+    }
+    '/_authenticated/profile': {
+      id: '/_authenticated/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof AuthenticatedProfileImport
+      parentRoute: typeof AuthenticatedImport
+    }
+    '/_authenticated/': {
+      id: '/_authenticated/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedIndexImport
+      parentRoute: typeof AuthenticatedImport
     }
   }
 }
 
 // Create and export the route tree
 
+interface AuthenticatedRouteChildren {
+  AuthenticatedAddLocationRoute: typeof AuthenticatedAddLocationRoute
+  AuthenticatedLocationsRoute: typeof AuthenticatedLocationsRoute
+  AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
+  AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
+}
+
+const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
+  AuthenticatedAddLocationRoute: AuthenticatedAddLocationRoute,
+  AuthenticatedLocationsRoute: AuthenticatedLocationsRoute,
+  AuthenticatedProfileRoute: AuthenticatedProfileRoute,
+  AuthenticatedIndexRoute: AuthenticatedIndexRoute,
+}
+
+const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
+  AuthenticatedRouteChildren,
+)
+
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
+  '': typeof AuthenticatedRouteWithChildren
   '/about': typeof AboutRoute
-  '/add-location': typeof AddLocationRoute
-  '/locations': typeof LocationsRoute
+  '/add-location': typeof AuthenticatedAddLocationRoute
+  '/locations': typeof AuthenticatedLocationsRoute
+  '/profile': typeof AuthenticatedProfileRoute
+  '/': typeof AuthenticatedIndexRoute
 }
 
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/add-location': typeof AddLocationRoute
-  '/locations': typeof LocationsRoute
+  '/add-location': typeof AuthenticatedAddLocationRoute
+  '/locations': typeof AuthenticatedLocationsRoute
+  '/profile': typeof AuthenticatedProfileRoute
+  '/': typeof AuthenticatedIndexRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
-  '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/about': typeof AboutRoute
-  '/add-location': typeof AddLocationRoute
-  '/locations': typeof LocationsRoute
+  '/_authenticated/add-location': typeof AuthenticatedAddLocationRoute
+  '/_authenticated/locations': typeof AuthenticatedLocationsRoute
+  '/_authenticated/profile': typeof AuthenticatedProfileRoute
+  '/_authenticated/': typeof AuthenticatedIndexRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about' | '/add-location' | '/locations'
+  fullPaths: '' | '/about' | '/add-location' | '/locations' | '/profile' | '/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/add-location' | '/locations'
-  id: '__root__' | '/' | '/about' | '/add-location' | '/locations'
+  to: '/about' | '/add-location' | '/locations' | '/profile' | '/'
+  id:
+    | '__root__'
+    | '/_authenticated'
+    | '/about'
+    | '/_authenticated/add-location'
+    | '/_authenticated/locations'
+    | '/_authenticated/profile'
+    | '/_authenticated/'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
+  AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   AboutRoute: typeof AboutRoute
-  AddLocationRoute: typeof AddLocationRoute
-  LocationsRoute: typeof LocationsRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
+  AuthenticatedRoute: AuthenticatedRouteWithChildren,
   AboutRoute: AboutRoute,
-  AddLocationRoute: AddLocationRoute,
-  LocationsRoute: LocationsRoute,
 }
 
 export const routeTree = rootRoute
@@ -134,23 +187,37 @@ export const routeTree = rootRoute
     "__root__": {
       "filePath": "__root.tsx",
       "children": [
-        "/",
-        "/about",
-        "/add-location",
-        "/locations"
+        "/_authenticated",
+        "/about"
       ]
     },
-    "/": {
-      "filePath": "index.tsx"
+    "/_authenticated": {
+      "filePath": "_authenticated.tsx",
+      "children": [
+        "/_authenticated/add-location",
+        "/_authenticated/locations",
+        "/_authenticated/profile",
+        "/_authenticated/"
+      ]
     },
     "/about": {
       "filePath": "about.tsx"
     },
-    "/add-location": {
-      "filePath": "add-location.tsx"
+    "/_authenticated/add-location": {
+      "filePath": "_authenticated/add-location.tsx",
+      "parent": "/_authenticated"
     },
-    "/locations": {
-      "filePath": "locations.tsx"
+    "/_authenticated/locations": {
+      "filePath": "_authenticated/locations.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/profile": {
+      "filePath": "_authenticated/profile.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/": {
+      "filePath": "_authenticated/index.tsx",
+      "parent": "/_authenticated"
     }
   }
 }

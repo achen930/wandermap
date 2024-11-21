@@ -1,6 +1,7 @@
 import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
 import { z } from "zod";
+import { getUser } from "../kinde";
 
 const locationSchema = z.object({
 	id: z.number().int().positive().min(1),
@@ -18,25 +19,26 @@ const fakeLocations: Location[] = [
 ];
 
 export const locationsRoute = new Hono()
-	.get("/", async (c) => {
+	.get("/", getUser, async (c) => {
+		const user = c.var.user;
 		// await new Promise((r) => setTimeout(r, 2000));
 		c.status(200);
 		return c.json({ locations: fakeLocations });
 	})
-	.post("/", zValidator("json", createPostSchema), async (c) => {
+	.post("/", getUser, zValidator("json", createPostSchema), async (c) => {
 		const location = await c.req.valid("json");
 		const newLocation = { ...location, id: fakeLocations.length + 1 };
 		fakeLocations.push(newLocation);
 		c.status(201);
 		return c.json(newLocation);
 	})
-	.get("/total-locations", async (c) => {
+	.get("/total-locations", getUser, async (c) => {
 		// await new Promise((r) => setTimeout(r, 2000));
 		const total = fakeLocations.length;
 		c.status(200);
 		return c.json({ total });
 	})
-	.get("/:id{[0-9]+}", (c) => {
+	.get("/:id{[0-9]+}", getUser, (c) => {
 		const id = Number.parseInt(c.req.param("id"));
 		const location = fakeLocations.find((location) => location.id === id);
 		if (!location) {
@@ -45,7 +47,7 @@ export const locationsRoute = new Hono()
 		c.status(200);
 		return c.json({ location });
 	})
-	.delete("/:id{[0-9]+}", (c) => {
+	.delete("/:id{[0-9]+}", getUser, (c) => {
 		const id = Number.parseInt(c.req.param("id"));
 		const index = fakeLocations.findIndex((location) => location.id === id);
 		if (index === -1) {
