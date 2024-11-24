@@ -2,7 +2,11 @@ import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
 import { getUser } from "../kinde";
 import { db } from "../db";
-import { locations as locationsTable } from "../db/schema/locations";
+import {
+  locations as locationsTable,
+  insertLocationSchema,
+  selectLocationSchema,
+} from "../db/schema/locations";
 import { eq, desc, count, and } from "drizzle-orm";
 import { createLocationSchema } from "../sharedTypes";
 
@@ -27,12 +31,14 @@ export const locationsRoute = new Hono()
       return c.json({ error: "Invalid location data" }, 400);
     }
 
+    const validatedLocation = insertLocationSchema.parse({
+      ...location,
+      userId: user.id,
+    });
+
     const result = await db
       .insert(locationsTable)
-      .values({
-        ...location,
-        userId: user.id,
-      })
+      .values(validatedLocation)
       .returning();
 
     if (!result) {

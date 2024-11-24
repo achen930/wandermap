@@ -53,7 +53,7 @@ function AddLocation() {
           e.stopPropagation();
           form.handleSubmit();
         }}
-        className="flex flex-col max-w-xl m-auto mt-4 gap-4"
+        className="flex flex-col max-w-xl m-auto mt-4 gap-y-4"
       >
         {/* Name Field */}
         <div className="flex items-center gap-2">
@@ -64,7 +64,7 @@ function AddLocation() {
             }}
             children={(field) => {
               return (
-                <>
+                <div className="flex flex-col gap-2">
                   <Label htmlFor={field.name}>Name</Label>
                   <input
                     id={field.name}
@@ -76,7 +76,7 @@ function AddLocation() {
                     className="border b-2 rounded px-2"
                   />
                   <FieldInfo field={field} />
-                </>
+                </div>
               );
             }}
           />
@@ -91,7 +91,7 @@ function AddLocation() {
             }}
             children={(field) => {
               return (
-                <>
+                <div className="flex flex-col gap-2">
                   <Label htmlFor={field.name}>Address</Label>
                   <input
                     id={field.name}
@@ -103,7 +103,7 @@ function AddLocation() {
                     className="border b-2 rounded px-2"
                   />
                   <FieldInfo field={field} />
-                </>
+                </div>
               );
             }}
           />
@@ -116,7 +116,7 @@ function AddLocation() {
             onChange: createLocationSchema.shape.visited,
           }}
           children={(field) => (
-            <>
+            <div className="flex flex-col gap-2">
               <Label htmlFor="visited">Visited</Label>
               <RadioGroup
                 value={`${field.state.value}`}
@@ -133,7 +133,7 @@ function AddLocation() {
                 </div>
               </RadioGroup>
               <FieldInfo field={field} />
-            </>
+            </div>
           )}
         />
 
@@ -144,7 +144,7 @@ function AddLocation() {
             onChange: createLocationSchema.shape.favorite,
           }}
           children={(field) => (
-            <>
+            <div className="flex flex-col gap-2">
               <Label htmlFor="favorite">Favorite</Label>
               <RadioGroup
                 value={`${field.state.value}`}
@@ -161,7 +161,7 @@ function AddLocation() {
                 </div>
               </RadioGroup>
               <FieldInfo field={field} />
-            </>
+            </div>
           )}
         />
 
