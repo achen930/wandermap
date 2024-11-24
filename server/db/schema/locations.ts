@@ -6,6 +6,7 @@ import {
   boolean,
   index,
   timestamp,
+  date,
 } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
@@ -22,6 +23,8 @@ export const locations = pgTable(
     visited: boolean("visited").default(false).notNull(),
     favorite: boolean("favorite").default(false).notNull(),
     createdAt: timestamp("created_at").defaultNow(),
+    startDate: date("start_date").defaultNow().notNull(),
+    endDate: date("end_date").defaultNow().notNull(),
   },
   (locations) => ({
     userIdIndex: index("user_id_index").on(locations.userId),
@@ -38,6 +41,15 @@ export const insertLocationSchema = createInsertSchema(locations, {
     .min(-180)
     .max(180, "Longitude must be between -180 and 180"),
   address: z.string().trim().max(256).optional(),
+  startDate: z
+    .string()
+    .refine((val) => !isNaN(Date.parse(val)), "Invalid start date")
+    .transform((val) => new Date(val)),
+  endDate: z
+    .string()
+    .refine((val) => !isNaN(Date.parse(val)), "Invalid end date")
+    .transform((val) => new Date(val)),
 });
+
 // Schema for selecting a location - can be used to validate API responses
 export const selectLocationSchema = createSelectSchema(locations);
