@@ -5,7 +5,6 @@ import { db } from "../db";
 import {
   locations as locationsTable,
   insertLocationSchema,
-  selectLocationSchema,
 } from "../db/schema/locations";
 import { eq, desc, count, and } from "drizzle-orm";
 import { createLocationSchema } from "../sharedTypes";
@@ -39,7 +38,8 @@ export const locationsRoute = new Hono()
     const result = await db
       .insert(locationsTable)
       .values(validatedLocation)
-      .returning();
+      .returning()
+      .then((res) => res[0]);
 
     if (!result) {
       return c.json({ error: "Failed to create location" }, 500);

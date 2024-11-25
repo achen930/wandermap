@@ -5,7 +5,8 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useForm } from "@tanstack/react-form";
 import type { FieldApi } from "@tanstack/react-form";
 import { zodValidator } from "@tanstack/zod-form-adapter";
-import { api } from "@/lib/api";
+import { createLocation, getAllLocationsQueryOptions } from "@/lib/api";
+import { useQueryClient } from "@tanstack/react-query";
 import { createLocationSchema } from "@server/sharedTypes";
 import { DatePickerWithRange } from "@/components/ui/date-range-picker";
 
@@ -25,6 +26,7 @@ function FieldInfo({ field }: { field: FieldApi<any, any, any, any> }) {
 }
 
 function AddLocation() {
+  const queryClient = useQueryClient();
   const navigate = useNavigate();
 
   const form = useForm({
@@ -36,16 +38,24 @@ function AddLocation() {
       address: "",
       latitude: "",
       longitude: "",
-      startDate: new Date().toISOString().split("T")[0], // ISO string (YYYY-MM-DD)
-      endDate: new Date().toISOString().split("T")[0], // ISO string (YYYY-MM-DD)
+      startDate: new Date(Date.now()),
+      endDate: new Date(Date.now()),
     },
     onSubmit: async ({ value }) => {
       console.log(form.state.values);
-      const res = await api.locations.$post({ json: value });
-      if (!res.ok) {
-        throw new Error("Server error");
-      }
+
+      const existingLocations = await queryClient.ensureQueryData(
+        getAllLocationsQueryOptions
+      );
+
       navigate({ to: "/locations" });
+
+      const newLocation = await createLocation({ value });
+
+      queryClient.setQueryData(getAllLocationsQueryOptions.queryKey, {
+        ...existingLocations,
+        locations: [newLocation, ...existingLocations.locations],
+      });
     },
   });
 
@@ -100,14 +110,8 @@ function AddLocation() {
             startDate={new Date(form.state.values.startDate)}
             endDate={new Date(form.state.values.endDate)}
             onDateChange={(startDate, endDate) => {
-              form.setFieldValue(
-                "startDate",
-                startDate.toISOString().split("T")[0]
-              );
-              form.setFieldValue(
-                "endDate",
-                endDate.toISOString().split("T")[0]
-              );
+              form.setFieldValue("startDate", startDate);
+              form.setFieldValue("endDate", endDate);
             }}
           />
         </div>

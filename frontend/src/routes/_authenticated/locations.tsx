@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { api } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
+import { getAllLocationsQueryOptions } from "@/lib/api";
 import {
   Table,
   TableBody,
@@ -17,21 +17,9 @@ export const Route = createFileRoute("/_authenticated/locations")({
   component: Locations,
 });
 
-async function getAllLocations() {
-  // await new Promise((r) => setTimeout(r, 2000));
-  const res = await api.locations.$get();
-  if (!res.ok) {
-    throw new Error("server error");
-  }
-  const data = await res.json();
-  return data;
-}
-
 function Locations() {
-  const { isPending, error, data } = useQuery({
-    queryKey: ["get-all-locations"],
-    queryFn: getAllLocations,
-  });
+  const { isPending, error, data } = useQuery(getAllLocationsQueryOptions);
+  if (error) return "An error has occured: " + error.message;
   return (
     <div className="p-2">
       Show All Locations
