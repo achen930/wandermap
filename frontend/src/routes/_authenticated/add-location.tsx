@@ -95,6 +95,9 @@ function AddLocation() {
         {/* Name Field */}
         <form.Field
           name="name"
+          validators={{
+            onChange: createLocationSchema.shape.name,
+          }}
           children={(field) => (
             <div className="flex flex-col gap-2">
               <Label htmlFor={field.name}>Name</Label>
@@ -112,6 +115,9 @@ function AddLocation() {
         {/* Address Field */}
         <form.Field
           name="address"
+          validators={{
+            onChange: createLocationSchema.shape.address,
+          }}
           children={(field) => (
             <div className="flex flex-col gap-2">
               <Label htmlFor={field.name}>Address</Label>
