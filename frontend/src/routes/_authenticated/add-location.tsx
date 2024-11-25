@@ -5,10 +5,15 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useForm } from "@tanstack/react-form";
 import type { FieldApi } from "@tanstack/react-form";
 import { zodValidator } from "@tanstack/zod-form-adapter";
-import { createLocation, getAllLocationsQueryOptions } from "@/lib/api";
+import {
+  createLocation,
+  getAllLocationsQueryOptions,
+  loadingCreateLocationQueryOptions,
+} from "@/lib/api";
 import { useQueryClient } from "@tanstack/react-query";
 import { createLocationSchema } from "@server/sharedTypes";
 import { DatePickerWithRange } from "@/components/ui/date-range-picker";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/add-location")({
   component: AddLocation,
@@ -38,8 +43,8 @@ function AddLocation() {
       address: "",
       latitude: "",
       longitude: "",
-      startDate: new Date(Date.now()).toISOString(),
-      endDate: new Date(Date.now()).toISOString(),
+      startDate: new Date(Date.now()).toISOString().split("T")[0],
+      endDate: new Date(Date.now()).toISOString().split("T")[0],
     },
     onSubmit: async ({ value }) => {
       const existingLocations = await queryClient.ensureQueryData(
@@ -48,12 +53,32 @@ function AddLocation() {
 
       navigate({ to: "/locations" });
 
-      const newLocation = await createLocation({ value });
-
-      queryClient.setQueryData(getAllLocationsQueryOptions.queryKey, {
-        ...existingLocations,
-        locations: [newLocation, ...existingLocations.locations],
+      // loading state
+      queryClient.setQueryData(loadingCreateLocationQueryOptions.queryKey, {
+        location: value,
       });
+
+      try {
+        const newLocation = await createLocation({ value });
+
+        queryClient.setQueryData(getAllLocationsQueryOptions.queryKey, {
+          ...existingLocations,
+          locations: [newLocation, ...existingLocations.locations],
+        });
+        toast("Location Created", {
+          description: `Successfully created new location: ${newLocation.name}`,
+        });
+      } catch (e) {
+        // error state
+        toast("Error", {
+          description: "Failed to create new location",
+        });
+      } finally {
+        queryClient.setQueryData(
+          loadingCreateLocationQueryOptions.queryKey,
+          {}
+        );
+      }
     },
   });
 
