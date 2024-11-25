@@ -40,6 +40,7 @@ function AddLocation() {
       endDate: new Date().toISOString().split("T")[0], // ISO string (YYYY-MM-DD)
     },
     onSubmit: async ({ value }) => {
+      console.log(form.state.values);
       const res = await api.locations.$post({ json: value });
       if (!res.ok) {
         throw new Error("Server error");
@@ -93,7 +94,7 @@ function AddLocation() {
         />
 
         {/* Date Picker */}
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2 self-center">
           <Label>Date Range</Label>
           <DatePickerWithRange
             startDate={new Date(form.state.values.startDate)}
@@ -110,6 +111,62 @@ function AddLocation() {
             }}
           />
         </div>
+
+        {/* Visited Field */}
+        <form.Field
+          name="visited"
+          validators={{
+            onChange: createLocationSchema.shape.visited,
+          }}
+          children={(field) => (
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="visited">Visited</Label>
+              <RadioGroup
+                value={`${field.state.value}`}
+                onValueChange={(value) => field.handleChange(value === "true")}
+                className="flex flex-row"
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="true" id="yes" />
+                  <Label htmlFor="yes">Yes</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="false" id="no" />
+                  <Label htmlFor="no">No</Label>
+                </div>
+              </RadioGroup>
+              <FieldInfo field={field} />
+            </div>
+          )}
+        />
+
+        {/* Favorite Field */}
+        <form.Field
+          name="favorite"
+          validators={{
+            onChange: createLocationSchema.shape.favorite,
+          }}
+          children={(field) => (
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="favorite">Favorite</Label>
+              <RadioGroup
+                value={`${field.state.value}`}
+                onValueChange={(value) => field.handleChange(value === "true")}
+                className="flex flex-row"
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="true" id="favorite-yes" />
+                  <Label htmlFor="favorite-yes">Yes</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="false" id="favorite-no" />
+                  <Label htmlFor="favorite-no">No</Label>
+                </div>
+              </RadioGroup>
+              <FieldInfo field={field} />
+            </div>
+          )}
+        />
 
         {/* Submit Button */}
         <form.Subscribe
