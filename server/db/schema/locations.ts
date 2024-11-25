@@ -20,11 +20,11 @@ export const locations = pgTable(
     latitude: varchar("latitude", { length: 50 }).notNull(),
     longitude: varchar("longitude", { length: 50 }).notNull(),
     address: varchar("address", { length: 256 }), // Optional, fetched or user-provided
-    visited: boolean("visited").default(false).notNull(),
-    favorite: boolean("favorite").default(false).notNull(),
+    visited: boolean("visited").notNull(),
+    favorite: boolean("favorite").notNull(),
     createdAt: timestamp("created_at").defaultNow(),
-    startDate: date("start_date").defaultNow().notNull(),
-    endDate: date("end_date").defaultNow().notNull(),
+    startDate: date("start_date").notNull(),
+    endDate: date("end_date").notNull(),
   },
   (locations) => ({
     userIdIndex: index("user_id_index").on(locations.userId),
@@ -43,12 +43,10 @@ export const insertLocationSchema = createInsertSchema(locations, {
   address: z.string().trim().max(256).optional(),
   startDate: z
     .string()
-    .refine((val) => !isNaN(Date.parse(val)), "Invalid start date")
-    .transform((val) => new Date(val)),
+    .refine((val) => !isNaN(Date.parse(val)), "Invalid start date"),
   endDate: z
     .string()
-    .refine((val) => !isNaN(Date.parse(val)), "Invalid end date")
-    .transform((val) => new Date(val)),
+    .refine((val) => !isNaN(Date.parse(val)), "Invalid end date"),
 });
 
 // Schema for selecting a location - can be used to validate API responses

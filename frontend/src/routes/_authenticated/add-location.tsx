@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { Label } from "@/components/ui/label";
+import { Label } from "@radix-ui/react-label";
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useForm } from "@tanstack/react-form";
@@ -38,12 +38,10 @@ function AddLocation() {
       address: "",
       latitude: "",
       longitude: "",
-      startDate: new Date(Date.now()),
-      endDate: new Date(Date.now()),
+      startDate: new Date(Date.now()).toISOString(),
+      endDate: new Date(Date.now()).toISOString(),
     },
     onSubmit: async ({ value }) => {
-      console.log(form.state.values);
-
       const existingLocations = await queryClient.ensureQueryData(
         getAllLocationsQueryOptions
       );
@@ -110,8 +108,14 @@ function AddLocation() {
             startDate={new Date(form.state.values.startDate)}
             endDate={new Date(form.state.values.endDate)}
             onDateChange={(startDate, endDate) => {
-              form.setFieldValue("startDate", startDate);
-              form.setFieldValue("endDate", endDate);
+              form.setFieldValue(
+                "startDate",
+                startDate.toISOString().split("T")[0]
+              );
+              form.setFieldValue(
+                "endDate",
+                endDate.toISOString().split("T")[0]
+              );
             }}
           />
         </div>
