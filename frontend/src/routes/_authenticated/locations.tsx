@@ -47,8 +47,15 @@ function Locations() {
     );
 
   const handleEdit = (id: number) => {
-    const locationToEdit = data?.locations.find((loc) => loc.id === id);
-    setSelectedLocation(locationToEdit);
+    const locationToEdit = data?.locations.find(
+      (location) => location.id === id
+    );
+    console.log("location data: ", data);
+    if (locationToEdit) {
+      setSelectedLocation(locationToEdit);
+    } else {
+      toast("Error", { description: "Location not found." });
+    }
   };
 
   return (
@@ -75,13 +82,13 @@ function Locations() {
         <LocationEditDialog
           id={selectedLocation.id}
           initialName={selectedLocation.name}
-          initialAddress={selectedLocation.initialAddress}
-          initialFavorite={selectedLocation.initialFavorite}
-          initialLatitude={selectedLocation.initialLatitude}
-          initialLongitude={selectedLocation.initialLongitude}
-          initialEndDate={selectedLocation.initialEndDate}
-          initialStartDate={selectedLocation.initialStartDate}
-          initialVisited={selectedLocation.initialVisited}
+          initialAddress={selectedLocation.address}
+          initialFavorite={selectedLocation.favorite}
+          initialLatitude={selectedLocation.latitude}
+          initialLongitude={selectedLocation.longitude}
+          initialStartDate={selectedLocation.startDate}
+          initialEndDate={selectedLocation.endDate}
+          initialVisited={selectedLocation.visited}
           onClose={() => setSelectedLocation(null)}
         />
       )}
@@ -146,21 +153,25 @@ function LocationCard({
             {isLoading ? (
               <Skeleton className="h-4 w-12 rounded" />
             ) : location.visited ? (
-              "Yes"
+              "✅"
             ) : (
-              "No"
+              "❌"
             )}
           </p>
         </div>
         <div>
-          <p className="font-medium text-gray-700">Favorite</p>
+          {location.favorite === true ? (
+            <p className="font-medium text-gray-700">Favorite</p>
+          ) : (
+            ""
+          )}
           <p>
             {isLoading ? (
               <Skeleton className="h-4 w-12 rounded" />
             ) : location.favorite ? (
-              "Yes"
+              "⭐"
             ) : (
-              "No"
+              ""
             )}
           </p>
         </div>
@@ -269,9 +280,6 @@ function LocationEditDialog({
     favorite: initialFavorite,
   });
 
-  console.log("location", location);
-
-  console.log("set location", setLocation);
   const queryClient = useQueryClient();
 
   const mutation = useMutation({

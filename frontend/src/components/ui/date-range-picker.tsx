@@ -35,13 +35,13 @@ export function DatePickerWithRange({
 
   const handleSelect = (date: DateRange | undefined) => {
     if (date && date.from && date.to) {
-      onDateChange(date.from, date.to); // Propagate the date range change to parent
+      onDateChange(date.from, date.to);
     }
     setDate(date);
   };
 
   return (
-    <div className={cn("grid gap-2", className)}>
+    <div className={cn("w-full grid gap-2", className)}>
       <Popover>
         <PopoverTrigger asChild>
           <Button
@@ -73,7 +73,7 @@ export function DatePickerWithRange({
             mode="range"
             defaultMonth={date?.from}
             selected={date}
-            onSelect={handleSelect} // Update the date when selected
+            onSelect={handleSelect}
             numberOfMonths={2}
           />
         </PopoverContent>
