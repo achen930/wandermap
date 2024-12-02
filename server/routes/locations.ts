@@ -93,4 +93,44 @@ export const locationsRoute = new Hono()
     // c.status(204);
     // return c.body(null)
     return c.json({ location: location });
-  });
+  })
+  .patch(
+    "/:id{[0-9]+}",
+    getUser,
+    zValidator("json", createLocationSchema),
+    async (c) => {
+      const id = Number.parseInt(c.req.param("id"));
+      const updates = await c.req.valid("json");
+      const user = c.var.user;
+
+      // Ensure the location exists and belongs to the user
+      const existingLocation = await db
+        .select()
+        .from(locationsTable)
+        .where(
+          and(eq(locationsTable.userId, user.id), eq(locationsTable.id, id))
+        )
+        .then((res) => res[0]);
+
+      if (!existingLocation) {
+        return c.json({ error: "Location not found or unauthorized" }, 404);
+      }
+
+      // Update the location
+      const updatedLocation = await db
+        .update(locationsTable)
+        .set(updates)
+        .where(
+          and(eq(locationsTable.userId, user.id), eq(locationsTable.id, id))
+        )
+        .returning()
+        .then((res) => res[0]);
+
+      if (!updatedLocation) {
+        return c.json({ error: "Failed to update location" }, 500);
+      }
+
+      c.status(200);
+      return c.json({ location: updatedLocation });
+    }
+  );

@@ -1,7 +1,10 @@
 import { hc } from "hono/client";
 import { type ApiRoutes } from "@server/app";
 import { queryOptions } from "@tanstack/react-query";
-import { type CreateLocation } from "@server/sharedTypes";
+import { createLocationSchema, type CreateLocation } from "@server/sharedTypes";
+import { z } from "zod";
+
+const updateLocationSchema = createLocationSchema.partial();
 
 const client = hc<ApiRoutes>("/");
 
@@ -64,6 +67,26 @@ export const loadingCreateLocationQueryOptions = queryOptions<{
 export async function deleteLocation({ id }: { id: number }) {
   const res = await api.locations[":id{[0-9]+}"].$delete({
     param: { id: id.toString() },
+  });
+
+  if (!res.ok) {
+    throw new Error("server error");
+  }
+}
+
+export async function editLocation({
+  id,
+  updates,
+}: {
+  id: number;
+  updates: z.infer<typeof createLocationSchema>;
+}) {
+  // Validate updates before sending the API request
+  const validatedUpdates = createLocationSchema.parse(updates);
+
+  const res = await api.locations[":id{[0-9]+}"].$patch({
+    param: { id: id.toString() },
+    json: validatedUpdates,
   });
 
   if (!res.ok) {

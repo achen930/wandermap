@@ -1,7 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Label } from "@radix-ui/react-label";
 import { Button } from "@/components/ui/button";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useForm } from "@tanstack/react-form";
 import type { FieldApi } from "@tanstack/react-form";
 import { zodValidator } from "@tanstack/zod-form-adapter";
@@ -151,7 +150,7 @@ function AddLocation() {
           />
         </div>
 
-        {/* Visited Field */}
+        {/* Visited Field (Checkbox) */}
         <form.Field
           name="visited"
           validators={{
@@ -160,26 +159,19 @@ function AddLocation() {
           children={(field) => (
             <div className="flex flex-col gap-2">
               <Label htmlFor="visited">Visited</Label>
-              <RadioGroup
-                value={`${field.state.value}`}
-                onValueChange={(value) => field.handleChange(value === "true")}
-                className="flex flex-row"
-              >
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="true" id="yes" />
-                  <Label htmlFor="yes">Yes</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="false" id="no" />
-                  <Label htmlFor="no">No</Label>
-                </div>
-              </RadioGroup>
+              <input
+                type="checkbox"
+                id="visited"
+                checked={field.state.value}
+                onChange={(e) => field.handleChange(e.target.checked)}
+                className="rounded"
+              />
               <FieldInfo field={field} />
             </div>
           )}
         />
 
-        {/* Favorite Field */}
+        {/* Favorite Field (Checkbox) */}
         <form.Field
           name="favorite"
           validators={{
@@ -188,20 +180,13 @@ function AddLocation() {
           children={(field) => (
             <div className="flex flex-col gap-2">
               <Label htmlFor="favorite">Favorite</Label>
-              <RadioGroup
-                value={`${field.state.value}`}
-                onValueChange={(value) => field.handleChange(value === "true")}
-                className="flex flex-row"
-              >
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="true" id="favorite-yes" />
-                  <Label htmlFor="favorite-yes">Yes</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="false" id="favorite-no" />
-                  <Label htmlFor="favorite-no">No</Label>
-                </div>
-              </RadioGroup>
+              <input
+                type="checkbox"
+                id="favorite"
+                checked={field.state.value}
+                onChange={(e) => field.handleChange(e.target.checked)}
+                className="rounded"
+              />
               <FieldInfo field={field} />
             </div>
           )}
