@@ -82,14 +82,14 @@ function AddLocation() {
   });
 
   return (
-    <div className="p-2">
-      <h2>Add Location</h2>
+    <div className="p-2 flex flex-col w-full items-center">
+      <h2 className="font-bold text-2xl">Add Location</h2>
       <form
         onSubmit={(e) => {
           e.preventDefault();
           form.handleSubmit();
         }}
-        className="flex flex-col max-w-xl m-auto mt-4 gap-y-4"
+        className="w-full flex flex-col mt-4 gap-y-4"
       >
         {/* Name Field */}
         <form.Field
@@ -132,9 +132,10 @@ function AddLocation() {
         />
 
         {/* Date Picker */}
-        <div className="flex flex-col gap-2 self-center">
+        <div className="flex flex-col gap-2">
           <Label>Date Range</Label>
           <DatePickerWithRange
+            className="w-full"
             startDate={new Date(form.state.values.startDate)}
             endDate={new Date(form.state.values.endDate)}
             onDateChange={(startDate, endDate) => {
@@ -157,7 +158,7 @@ function AddLocation() {
             onChange: createLocationSchema.shape.visited,
           }}
           children={(field) => (
-            <div className="flex flex-col gap-2">
+            <div className="flex items-center gap-2">
               <Label htmlFor="visited">Visited</Label>
               <input
                 type="checkbox"
@@ -178,7 +179,7 @@ function AddLocation() {
             onChange: createLocationSchema.shape.favorite,
           }}
           children={(field) => (
-            <div className="flex flex-col gap-2">
+            <div className="flex items-center gap-2">
               <Label htmlFor="favorite">Favorite</Label>
               <input
                 type="checkbox"

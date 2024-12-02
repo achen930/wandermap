@@ -2,10 +2,9 @@
 "use client";
 
 import * as React from "react";
-import { addDays, format } from "date-fns";
+import { format } from "date-fns";
 import { Calendar as CalendarIcon } from "lucide-react";
 import { DateRange } from "react-day-picker";
-
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -41,14 +40,14 @@ export function DatePickerWithRange({
   };
 
   return (
-    <div className={cn("w-full grid gap-2", className)}>
+    <div className={cn("grid gap-2", className)}>
       <Popover>
         <PopoverTrigger asChild>
           <Button
             id="date"
             variant={"outline"}
             className={cn(
-              "w-[300px] justify-start text-left font-normal",
+              "w-full justify-start text-left font-normal",
               !date && "text-muted-foreground"
             )}
           >
