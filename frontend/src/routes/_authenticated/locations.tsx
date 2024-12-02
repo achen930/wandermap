@@ -160,20 +160,20 @@ function LocationCard({
           </p>
         </div>
         <div>
-          {location.favorite === true ? (
-            <p className="font-medium text-gray-700">Favorite</p>
-          ) : (
-            ""
+          {location?.favorite !== false && (
+            <>
+              <p className="font-medium text-gray-700">Favorite</p>
+              <p>
+                {isLoading ? (
+                  <Skeleton className="h-4 w-12 rounded" />
+                ) : location?.favorite ? (
+                  "⭐"
+                ) : (
+                  ""
+                )}
+              </p>
+            </>
           )}
-          <p>
-            {isLoading ? (
-              <Skeleton className="h-4 w-12 rounded" />
-            ) : location.favorite ? (
-              "⭐"
-            ) : (
-              ""
-            )}
-          </p>
         </div>
       </CardContent>
       <CardFooter className="flex justify-end">
