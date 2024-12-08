@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/card";
 import { Edit, Trash } from "lucide-react";
 import { toast } from "sonner";
+import { useEffect } from "react";
 
 export const Route = createFileRoute("/_authenticated/locations")({
   component: Locations,
@@ -23,10 +24,16 @@ export const Route = createFileRoute("/_authenticated/locations")({
 
 function Locations() {
   const navigate = useNavigate();
-  const { isPending, error, data } = useQuery(getAllLocationsQueryOptions);
+  const { isPending, error, data, refetch } = useQuery(
+    getAllLocationsQueryOptions
+  );
   const { data: loadingCreateLocation } = useQuery(
     loadingCreateLocationQueryOptions
   );
+
+  useEffect(() => {
+    refetch();
+  }, [refetch]);
 
   if (error)
     return (

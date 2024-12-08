@@ -69,9 +69,9 @@ export const locationsRoute = new Hono()
       .where(and(eq(locationsTable.userId, user.id), eq(locationsTable.id, id)))
       .orderBy(desc(locationsTable.createdAt))
       .then((res) => res[0]);
-    if (!location) {
-      return c.notFound();
-    }
+    // if (!location) {
+    //   return c.notFound();
+    // }
     c.status(200);
     return c.json({ location });
   })

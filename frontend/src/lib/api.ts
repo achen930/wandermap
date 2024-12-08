@@ -49,6 +49,7 @@ export async function getLocationById(id: number) {
   }
 
   const data = await res.json();
+  console.log("hello", data);
   return data;
 }
 
