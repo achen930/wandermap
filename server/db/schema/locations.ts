@@ -19,7 +19,7 @@ export const locations = pgTable(
     name: varchar("name", { length: 256 }).notNull(),
     latitude: varchar("latitude", { length: 50 }).notNull(),
     longitude: varchar("longitude", { length: 50 }).notNull(),
-    address: varchar("address", { length: 256 }), // Optional, fetched or user-provided
+    address: varchar("address", { length: 256 }),
     visited: boolean("visited").notNull(),
     favorite: boolean("favorite").notNull(),
     createdAt: timestamp("created_at").defaultNow(),

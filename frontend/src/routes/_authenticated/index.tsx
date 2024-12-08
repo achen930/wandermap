@@ -9,7 +9,7 @@ import {
 import { api } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
-import { APIProvider, Map } from "@vis.gl/react-google-maps";
+import { APIProvider, Map, Marker } from "@vis.gl/react-google-maps";
 import { useGoogleMapsApiKey } from "@/GoogleMapsContext";
 
 export const Route = createFileRoute("/_authenticated/")({
@@ -30,7 +30,7 @@ function Index() {
   const {
     isPending,
     error,
-    data: locations,
+    data: locations = [],
   } = useQuery({
     queryKey: ["get-total-locations"],
     queryFn: getAllLocations,
@@ -58,7 +58,17 @@ function Index() {
             <Map
               defaultZoom={10}
               defaultCenter={{ lat: 49.2827, lng: -123.1207 }} // Vancouver, BC
-            ></Map>
+            >
+              {locations.map((location, index) => (
+                <Marker
+                  key={index}
+                  position={{
+                    lat: Number(location.latitude),
+                    lng: Number(location.longitude),
+                  }}
+                />
+              ))}
+            </Map>
           </APIProvider>
         )}
       </div>

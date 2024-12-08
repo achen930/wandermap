@@ -13,11 +13,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { createLocationSchema } from "@server/sharedTypes";
 import { DatePickerWithRange } from "@/components/ui/date-range-picker";
 import { toast } from "sonner";
-import {
-  Autocomplete,
-  LoadScript,
-  type Libraries,
-} from "@react-google-maps/api";
+import { Autocomplete } from "@react-google-maps/api";
 import { useEffect, useRef } from "react";
 import { useGoogleMapsApiKey } from "@/GoogleMapsContext";
 
@@ -36,8 +32,6 @@ function FieldInfo({ field }: { field: FieldApi<any, any, any, any> }) {
   );
 }
 
-const googleMapsLibraries: Libraries = ["places"];
-
 function AddLocation() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
@@ -54,7 +48,7 @@ function AddLocation() {
       );
       autocompleteRef.current.addListener("place_changed", handlePlaceSelect);
     }
-  }, [googleMapsApiKey]);
+  });
 
   const form = useForm({
     validatorAdapter: zodValidator(),
@@ -156,24 +150,19 @@ function AddLocation() {
           children={(field) => (
             <div className="flex flex-col gap-2">
               <Label htmlFor={field.name}>Address</Label>
-              <LoadScript
-                googleMapsApiKey={googleMapsApiKey}
-                libraries={googleMapsLibraries}
+              <Autocomplete
+                onLoad={(autocomplete) =>
+                  (autocompleteRef.current = autocomplete)
+                }
+                onPlaceChanged={handlePlaceSelect}
               >
-                <Autocomplete
-                  onLoad={(autocomplete) =>
-                    (autocompleteRef.current = autocomplete)
-                  }
-                  onPlaceChanged={handlePlaceSelect}
-                >
-                  <input
-                    id={field.name}
-                    value={field.state.value}
-                    onChange={(e) => field.handleChange(e.target.value)}
-                    className="border rounded px-2"
-                  />
-                </Autocomplete>
-              </LoadScript>
+                <input
+                  id={field.name}
+                  value={field.state.value}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                  className="border rounded px-2"
+                />
+              </Autocomplete>
 
               <FieldInfo field={field} />
             </div>

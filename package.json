@@ -17,6 +17,8 @@
 	"dependencies": {
 		"@hono/zod-validator": "^0.4.1",
 		"@kinde-oss/kinde-typescript-sdk": "^2.9.1",
+		"@react-google-maps/api": "^2.20.3",
+		"@types/google.maps": "^3.58.1",
 		"drizzle-orm": "^0.36.3",
 		"drizzle-zod": "^0.5.1",
 		"hono": "^4.6.10",
