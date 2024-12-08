@@ -13,7 +13,6 @@ import { useQueryClient } from "@tanstack/react-query";
 import { createLocationSchema } from "@server/sharedTypes";
 import { DatePickerWithRange } from "@/components/ui/date-range-picker";
 import { toast } from "sonner";
-import { Autocomplete } from "@react-google-maps/api";
 import { useEffect, useRef } from "react";
 import { useGoogleMapsApiKey } from "@/GoogleMapsContext";
 
@@ -98,41 +97,6 @@ function AddLocation() {
     },
   });
 
-  interface PlaceAutocompleteProps {
-    onPlaceSelect: (place: google.maps.places.PlaceResult | null) => void;
-  }
-
-  const PlaceAutocomplete = ({ onPlaceSelect }: PlaceAutocompleteProps) => {
-    const [placeAutocomplete, setPlaceAutocomplete] =
-      useState<google.maps.places.Autocomplete | null>(null);
-    const inputRef = useRef<HTMLInputElement>(null);
-    const places = useMapsLibrary("places");
-
-    useEffect(() => {
-      if (!places || !inputRef.current) return;
-
-      const options = {
-        fields: ["geometry", "name", "formatted_address"],
-      };
-
-      setPlaceAutocomplete(new places.Autocomplete(inputRef.current, options));
-    }, [places]);
-
-    useEffect(() => {
-      if (!placeAutocomplete) return;
-
-      placeAutocomplete.addListener("place_changed", () => {
-        onPlaceSelect(placeAutocomplete.getPlace());
-      });
-    }, [onPlaceSelect, placeAutocomplete]);
-
-    return (
-      <div className="autocomplete-container">
-        <input ref={inputRef} />
-      </div>
-    );
-  };
-
   const handlePlaceSelect = () => {
     const place = autocompleteRef.current?.getPlace();
     if (place && place.geometry && place.geometry.location) {
@@ -185,20 +149,13 @@ function AddLocation() {
           children={(field) => (
             <div className="flex flex-col gap-2">
               <Label htmlFor={field.name}>Address</Label>
-              <Autocomplete
-                onLoad={(autocomplete) =>
-                  (autocompleteRef.current = autocomplete)
-                }
-                onPlaceChanged={handlePlaceSelect}
-              >
-                <input
-                  id={field.name}
-                  value={field.state.value}
-                  onChange={(e) => field.handleChange(e.target.value)}
-                  className="border rounded px-2"
-                />
-              </Autocomplete>
-
+              <input
+                ref={inputRef}
+                id="address"
+                value={form.state.values.address}
+                onChange={(e) => form.setFieldValue("address", e.target.value)}
+                className="border rounded px-2"
+              />
               <FieldInfo field={field} />
             </div>
           )}

@@ -25,7 +25,7 @@ function NavBar() {
           About
         </Link>
         <Link to="/locations" className="[&.active]:font-bold">
-          Location
+          Locations
         </Link>
         <Link to="/add-location" className="[&.active]:font-bold">
           Add

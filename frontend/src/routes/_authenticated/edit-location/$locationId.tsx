@@ -8,7 +8,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { useEffect, useRef } from "react";
-import { Autocomplete } from "@react-google-maps/api";
 import { useForm } from "@tanstack/react-form";
 import { zodValidator } from "@tanstack/zod-form-adapter";
 import { createLocationSchema } from "@server/sharedTypes";
@@ -35,10 +34,24 @@ function EditLocation() {
   const { locationId } = Route.useParams();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const inputRef = useRef<HTMLInputElement | null>(null);
 
-  const { isPending, error, data } = useQuery(
+  useEffect(() => {
+    if (window.google && inputRef.current) {
+      autocompleteRef.current = new google.maps.places.Autocomplete(
+        inputRef.current
+      );
+      autocompleteRef.current.addListener("place_changed", handlePlaceSelect);
+    }
+  });
+
+  const { isPending, error, data, refetch } = useQuery(
     getLocationByIdQueryOptions(Number(locationId))
   );
+
+  useEffect(() => {
+    refetch();
+  }, [refetch]);
 
   if (error)
     return (
@@ -183,19 +196,15 @@ function EditLocation() {
             children={(field) => (
               <div className="flex flex-col gap-2">
                 <Label htmlFor={field.name}>Address</Label>
-                <Autocomplete
-                  onLoad={(autocomplete) =>
-                    (autocompleteRef.current = autocomplete)
+                <input
+                  ref={inputRef}
+                  id="address"
+                  value={String(form.state.values.address)}
+                  onChange={(e) =>
+                    form.setFieldValue("address", e.target.value)
                   }
-                  onPlaceChanged={handlePlaceSelect}
-                >
-                  <input
-                    id={field.name}
-                    value={field.state.value}
-                    onChange={(e) => field.handleChange(e.target.value)}
-                    className="border rounded px-2"
-                  />
-                </Autocomplete>
+                  className="border rounded px-2"
+                />
 
                 <FieldInfo field={field} />
               </div>
