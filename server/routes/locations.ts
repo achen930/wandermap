@@ -18,7 +18,6 @@ export const locationsRoute = new Hono()
       .where(eq(locationsTable.userId, user.id))
       .orderBy(desc(locationsTable.createdAt))
       .limit(100);
-
     c.status(200);
     return c.json({ locations: locations });
   })

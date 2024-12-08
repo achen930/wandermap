@@ -4,8 +4,6 @@ import { queryOptions } from "@tanstack/react-query";
 import { createLocationSchema, type CreateLocation } from "@server/sharedTypes";
 import { z } from "zod";
 
-const updateLocationSchema = createLocationSchema.partial();
-
 const client = hc<ApiRoutes>("/");
 
 export const api = client.api;
