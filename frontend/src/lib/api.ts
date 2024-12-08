@@ -39,11 +39,31 @@ export const getAllLocationsQueryOptions = queryOptions({
   staleTime: 1000 * 60 * 5,
 });
 
+export async function getLocationById(id: number) {
+  const res = await api.locations[":id{[0-9]+}"].$get({
+    param: { id: id.toString() },
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch location data");
+  }
+
+  const data = await res.json();
+  return data;
+}
+
+export const getLocationByIdQueryOptions = (id: number) =>
+  queryOptions({
+    queryKey: ["get-location", id],
+    queryFn: () => getLocationById(id),
+    staleTime: 1000 * 60 * 5,
+  });
+
 export async function createLocation({ value }: { value: CreateLocation }) {
   //await new Promise((r) => setTimeout(r, 2000));
   const res = await api.locations.$post({ json: value });
   if (!res.ok) {
-    const errorDetails = await res.text(); // Or use `res.json()` if it's a JSON response
+    const errorDetails = await res.json();
     console.error("Error:", errorDetails);
     throw new Error("Server error");
   }
@@ -79,7 +99,6 @@ export async function editLocation({
   id: number;
   updates: z.infer<typeof createLocationSchema>;
 }) {
-  // Validate updates before sending the API request
   const validatedUpdates = createLocationSchema.parse(updates);
 
   const res = await api.locations[":id{[0-9]+}"].$patch({

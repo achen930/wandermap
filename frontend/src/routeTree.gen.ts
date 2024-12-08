@@ -17,6 +17,7 @@ import { Route as AuthenticatedIndexImport } from './routes/_authenticated/index
 import { Route as AuthenticatedProfileImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedLocationsImport } from './routes/_authenticated/locations'
 import { Route as AuthenticatedAddLocationImport } from './routes/_authenticated/add-location'
+import { Route as AuthenticatedEditLocationLocationIdImport } from './routes/_authenticated/edit-location/$locationId'
 
 // Create/Update Routes
 
@@ -54,6 +55,13 @@ const AuthenticatedAddLocationRoute = AuthenticatedAddLocationImport.update({
   path: '/add-location',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+
+const AuthenticatedEditLocationLocationIdRoute =
+  AuthenticatedEditLocationLocationIdImport.update({
+    id: '/edit-location/$locationId',
+    path: '/edit-location/$locationId',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 
 // Populate the FileRoutesByPath interface
 
@@ -101,6 +109,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedIndexImport
       parentRoute: typeof AuthenticatedImport
     }
+    '/_authenticated/edit-location/$locationId': {
+      id: '/_authenticated/edit-location/$locationId'
+      path: '/edit-location/$locationId'
+      fullPath: '/edit-location/$locationId'
+      preLoaderRoute: typeof AuthenticatedEditLocationLocationIdImport
+      parentRoute: typeof AuthenticatedImport
+    }
   }
 }
 
@@ -111,6 +126,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedLocationsRoute: typeof AuthenticatedLocationsRoute
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
+  AuthenticatedEditLocationLocationIdRoute: typeof AuthenticatedEditLocationLocationIdRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
@@ -118,6 +134,8 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedLocationsRoute: AuthenticatedLocationsRoute,
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
+  AuthenticatedEditLocationLocationIdRoute:
+    AuthenticatedEditLocationLocationIdRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
@@ -131,6 +149,7 @@ export interface FileRoutesByFullPath {
   '/locations': typeof AuthenticatedLocationsRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/': typeof AuthenticatedIndexRoute
+  '/edit-location/$locationId': typeof AuthenticatedEditLocationLocationIdRoute
 }
 
 export interface FileRoutesByTo {
@@ -139,6 +158,7 @@ export interface FileRoutesByTo {
   '/locations': typeof AuthenticatedLocationsRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/': typeof AuthenticatedIndexRoute
+  '/edit-location/$locationId': typeof AuthenticatedEditLocationLocationIdRoute
 }
 
 export interface FileRoutesById {
@@ -149,13 +169,27 @@ export interface FileRoutesById {
   '/_authenticated/locations': typeof AuthenticatedLocationsRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
+  '/_authenticated/edit-location/$locationId': typeof AuthenticatedEditLocationLocationIdRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '' | '/about' | '/add-location' | '/locations' | '/profile' | '/'
+  fullPaths:
+    | ''
+    | '/about'
+    | '/add-location'
+    | '/locations'
+    | '/profile'
+    | '/'
+    | '/edit-location/$locationId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/about' | '/add-location' | '/locations' | '/profile' | '/'
+  to:
+    | '/about'
+    | '/add-location'
+    | '/locations'
+    | '/profile'
+    | '/'
+    | '/edit-location/$locationId'
   id:
     | '__root__'
     | '/_authenticated'
@@ -164,6 +198,7 @@ export interface FileRouteTypes {
     | '/_authenticated/locations'
     | '/_authenticated/profile'
     | '/_authenticated/'
+    | '/_authenticated/edit-location/$locationId'
   fileRoutesById: FileRoutesById
 }
 
@@ -197,7 +232,8 @@ export const routeTree = rootRoute
         "/_authenticated/add-location",
         "/_authenticated/locations",
         "/_authenticated/profile",
-        "/_authenticated/"
+        "/_authenticated/",
+        "/_authenticated/edit-location/$locationId"
       ]
     },
     "/about": {
@@ -217,6 +253,10 @@ export const routeTree = rootRoute
     },
     "/_authenticated/": {
       "filePath": "_authenticated/index.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/edit-location/$locationId": {
+      "filePath": "_authenticated/edit-location/$locationId.tsx",
       "parent": "/_authenticated"
     }
   }
