@@ -49,17 +49,19 @@ function Locations() {
       {loadingCreateLocation?.location && (
         <LocationCard isLoading location={loadingCreateLocation?.location} />
       )}
-      {isPending
-        ? Array(3)
-            .fill(0)
-            .map((_, i) => <LocationCard key={i} isLoading />)
-        : data?.locations.map((location) => (
-            <LocationCard
-              key={location.id}
-              location={location}
-              onEdit={() => navigate({ to: `/edit-location/${location.id}` })}
-            />
-          ))}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {isPending
+          ? Array(3)
+              .fill(0)
+              .map((_, i) => <LocationCard key={i} isLoading />)
+          : data?.locations.map((location) => (
+              <LocationCard
+                key={location.id}
+                location={location}
+                onEdit={() => navigate({ to: `/edit-location/${location.id}` })}
+              />
+            ))}
+      </div>
     </div>
   );
 }

@@ -223,6 +223,22 @@ function AddLocation() {
           )}
         />
 
+        <div className="flex flex-col items-start gap-4">
+          <Label htmlFor="photo">Photo</Label>
+          <input
+            type="file"
+            id="photo"
+            className="hidden"
+            onChange={(e) => console.log(e.target.files)}
+          />
+          <label
+            htmlFor="photo"
+            className="flex items-center justify-center w-32 h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 hover:bg-blue-50 transition-all"
+          >
+            <span className="text-sm text-gray-600">Upload Photo</span>
+          </label>
+        </div>
+
         {/* Submit Button */}
         <form.Subscribe
           selector={(state) => [state.canSubmit, state.isSubmitting]}
