@@ -45,6 +45,7 @@ function Locations() {
     loadingCreateLocationQueryOptions
   );
   const [selectedLocation, setSelectedLocation] = useState<any | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   if (error)
     return (
@@ -52,12 +53,14 @@ function Locations() {
     );
 
   const handleEdit = (id: number) => {
+    console.log("Handling edit for ID:", id); // Check if it's being triggered correctly
     const locationToEdit = data?.locations.find(
       (location) => location.id === id
     );
-    console.log("location data: ", data);
     if (locationToEdit) {
+      console.log("Location to edit:", locationToEdit);
       setSelectedLocation(locationToEdit);
+      setIsDialogOpen(true);
     } else {
       toast("Error", { description: "Location not found." });
     }
@@ -65,6 +68,7 @@ function Locations() {
 
   const handleCloseDialog = () => {
     setSelectedLocation(null);
+    setIsDialogOpen(false);
   };
 
   return (
@@ -320,7 +324,6 @@ function LocationEditDialog({
     },
   });
 
-  const googleMapsApiKey = useGoogleMapsApiKey();
   const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(true);
 
@@ -441,7 +444,7 @@ function LocationEditDialog({
           <form.Field
             name="startDate"
             validators={{
-              onChange: createLocationSchema.shape.address,
+              onChange: createLocationSchema.shape.startDate,
             }}
             children={(field) => (
               <div className="grid grid-cols-4 items-center gap-4">
@@ -459,22 +462,27 @@ function LocationEditDialog({
               </div>
             )}
           />
-
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="endDate" className="text-right">
-              End Date
-            </Label>
-            <Input
-              id="endDate"
-              type="date"
-              value={initialEndDate}
-              onChange={(e) =>
-                setLocation({ ...location, endDate: e.target.value })
-              }
-              required
-              className="col-span-3"
-            />
-          </div>
+          <form.Field
+            name="endDate"
+            validators={{
+              onChange: createLocationSchema.shape.endDate,
+            }}
+            children={(field) => (
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="endDate" className="text-right">
+                  End Date
+                </Label>
+                <Input
+                  id="endDate"
+                  type="date"
+                  value={field.state.value}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                  required
+                  className="col-span-3"
+                />
+              </div>
+            )}
+          />
 
           {/* Visited Field (Checkbox) */}
           <form.Field
