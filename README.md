@@ -107,3 +107,24 @@ Before running the project locally, ensure you have the following installed:
    ```
 
    The app will be available at http://localhost:5173
+
+## Authentication Configuration (Kinde)
+
+This project uses **Kinde** for authentication. Below are the steps to configure Kinde for this project.
+
+### Prerequisites
+
+1.  Create a Kinde account at [Kinde.com](https://kinde.com/).
+2.  Create a new application in the Kinde dashboard.
+
+### Environment Variables
+
+Add the following variables to your `.env` file:
+
+```
+KINDE_DOMAIN=https://example.kinde.com
+KINDE_CLIENT_ID=
+KINDE_CLIENT_SECRET=
+KINDE_REDIRECT_URI=http://localhost:5173/api/callback
+KINDE_LOGOUT_REDIRECT=http://localhost:5173
+```
