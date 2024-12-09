@@ -89,7 +89,9 @@ Before running the project locally, ensure you have the following installed:
    KINDE_REDIRECT_URI=
    KINDE_LOGOUT_REDIRECT=
 
-   DATABASE_URL=
+   DATABASE_URL=''
+
+   VITE_GOOGLE_MAPS_API_KEY=""
    ```
 
 5. **Start Development Server**:
@@ -105,17 +107,3 @@ Before running the project locally, ensure you have the following installed:
    ```
 
    The app will be available at http://localhost:5173
-
-## Additional Considerations
-
-Authentication with Kinde
-Kinde handles user authentication through the backend. Make sure to integrate Kinde's authentication system by following their backend TypeScript SDK documentation.
-
-State Management
-We use Tanstack Query for state management and data fetching, which ensures that all data-fetching operations are optimized and provide a seamless experience for the user. To get started with Tanstack Query, refer to the Tanstack Query Documentation.
-
-Database Integration
-We use Drizzle ORM to interact with PostgreSQL. Ensure that your DATABASE_URL in the .env file is set up correctly for seamless integration.
-
-Secure Routes
-All protected routes require authentication. We use Tanstack Router to manage authenticated routes, so ensure that the app correctly redirects users to login when they are not authenticated.
