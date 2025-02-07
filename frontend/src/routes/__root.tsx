@@ -5,12 +5,22 @@ import {
   Outlet,
 } from "@tanstack/react-router";
 import { Toaster } from "@/components/ui/sonner";
+import { userQueryOptions } from "@/lib/api";
 
 interface MyRouterContext {
   queryClient: QueryClient;
 }
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
+  beforeLoad: async ({ context }) => {
+    const queryClient = context.queryClient;
+    try {
+      const data = await queryClient.fetchQuery(userQueryOptions);
+      return data;
+    } catch (err) {
+      return { user: null };
+    }
+  },
   component: Root,
 });
 
@@ -39,15 +49,15 @@ function NavBar() {
 }
 
 function Root() {
+  const { user } = Route.useRouteContext();
   return (
     <>
-      <NavBar />
+      {user && <NavBar />}
       <hr />
       <div className="p-2 gap-2 max-w-2xl m-auto">
         <Outlet />
       </div>
       <Toaster />
-      {/* <TanStackRouterDevtools /> */}
     </>
   );
 }
