@@ -42,7 +42,7 @@ function Index() {
 
   return (
     <>
-      <Card className="w-[350px]">
+      <Card className="w-full">
         <CardHeader>
           <CardTitle>Total Locations</CardTitle>
           <CardDescription>The total locations you've been to</CardDescription>
